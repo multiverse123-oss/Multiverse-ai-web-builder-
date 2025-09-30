@@ -1,102 +1,82 @@
-// backend/prisma/schema.prisma
-generator client {
-  provider = "prisma-client-js"
-}
-
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
-model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String
-  name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
-  subscription Subscription?
-  projects     Project[]
-  
-  @@map("users")
-}
-
-model Subscription {
-  id               String   @id @default(cuid())
-  userId           String   @unique
-  plan             Plan     @default(FREE)
-  status           SubscriptionStatus @default(ACTIVE)
-  stripeCustomerId String?
-  stripeSubscriptionId String?
-  promptsPerDay    Int
-  promptsUsedToday Int      @default(0)
-  lastPromptReset  DateTime @default(now())
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  @@map("subscriptions")
-}
-
-model Project {
+// Add to your existing schema.prisma
+model ProjectSearch {
   id          String   @id @default(cuid())
-  name        String
-  description String?
+  projectId   String
+  query       String
+  results     Json     // Stores search results metadata
   userId      String
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
   
-  user      User   @relation(fields: [userId], references: [id])
-  versions  ProjectVersion[]
-  deployments Deployment[]
+  project Project @relation(fields: [projectId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
   
-  @@map("projects")
+  @@map("project_searches")
 }
 
-model ProjectVersion {
+model ProjectMember {
   id        String   @id @default(cuid())
   projectId String
-  version   Int
-  code      Json
-  createdAt DateTime @default(now())
+  userId    String
+  role      MemberRole @default(VIEWER) // VIEWER, EDITOR, ADMIN
+  invitedBy String
+  invitedAt DateTime @default(now())
+  joinedAt  DateTime?
+  status    InvitationStatus @default(PENDING)
+  
+  project Project @relation(fields: [projectId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+  
+  @@unique([projectId, userId])
+  @@map("project_members")
+}
+
+model ProjectActivity {
+  id          String   @id @default(cuid())
+  projectId   String
+  userId      String
+  action      String   // "created", "modified", "built", "deployed"
+  targetType  String   // "file", "project", "deployment"
+  targetId    String?
+  details     Json?
+  createdAt   DateTime @default(now())
+  
+  project Project @relation(fields: [projectId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+  
+  @@map("project_activities")
+}
+
+model BuildLog {
+  id          String   @id @default(cuid())
+  projectId   String
+  status      BuildStatus @default(PENDING)
+  logs        String?
+  progress    Int      @default(0) // 0-100 percentage
+  startedAt   DateTime @default(now())
+  completedAt DateTime?
   
   project Project @relation(fields: [projectId], references: [id])
   
-  @@unique([projectId, version])
-  @@map("project_versions")
+  @@map("build_logs")
 }
 
-model Deployment {
-  id        String   @id @default(cuid())
-  projectId String
-  url       String
-  status    DeploymentStatus @default(PENDING)
-  logs      String?
-  createdAt DateTime @default(now())
-  
-  project Project @relation(fields: [projectId], references: [id])
-  
-  @@map("deployments")
+enum MemberRole {
+  VIEWER
+  EDITOR
+  ADMIN
 }
 
-enum Plan {
-  FREE
-  BASIC
-  STANDARD
-  PREMIUM
-}
-
-enum SubscriptionStatus {
-  ACTIVE
-  CANCELLED
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
   EXPIRED
 }
 
-enum DeploymentStatus {
+enum BuildStatus {
   PENDING
   BUILDING
   SUCCESS
   FAILED
+  CANCELLED
 }
