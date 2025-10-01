@@ -36,14 +36,62 @@ interface ProjectProviderProps {
   children: ReactNode;
 }
 
-export const ProjectProvider: ({ children }: ProjectProviderProps) => (
-  <ProjectContext.Provider value={{
-    projects: [],
-    loading: false,
-    fetchProjects: async () => {},
-    createProject: async (name: string, description: string) => ({ /*...*/ }),
-    deleteProject: async (id: string) => {}
-  }}>
-    {children}
-  </ProjectContext.Provider>
-);
+// Fixed: Properly defined as a React Function Component
+export const ProjectProvider: React.FC<ProjectProviderProps> = ({ children }) => {
+  // Fixed: Added proper state initialization with TypeScript generics :cite[10]
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  // Fixed: Provided a basic implementation for fetchProjects
+  const fetchProjects = async (): Promise<void> => {
+    setLoading(true);
+    try {
+      // TODO: Replace with actual API call
+      console.log('Fetching projects...');
+      // Simulate API call
+      // const response = await api.get('/projects');
+      // setProjects(response.data);
+    } catch (error) {
+      console.error('Failed to fetch projects:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fixed: Provided implementation and return value for createProject
+  const createProject = async (name: string, description: string): Promise<Project> => {
+    const newProject: Project = {
+      id: Math.random().toString(36).substr(2, 9), // Simple ID generation
+      name,
+      description,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      status: 'draft',
+      githubConnected: false,
+    };
+    
+    // Update state with the new project
+    setProjects(prevProjects => [...prevProjects, newProject]);
+    return newProject;
+  };
+
+  // Fixed: Provided implementation for deleteProject
+  const deleteProject = async (id: string): Promise<void> => {
+    setProjects(prevProjects => prevProjects.filter(project => project.id !== id));
+  };
+
+  // Fixed: Properly structured the context value object
+  const contextValue: ProjectContextType = {
+    projects,
+    loading,
+    fetchProjects,
+    createProject,
+    deleteProject,
+  };
+
+  return (
+    <ProjectContext.Provider value={contextValue}>
+      {children}
+    </ProjectContext.Provider>
+  );
+};
