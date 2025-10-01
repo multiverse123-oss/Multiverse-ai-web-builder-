@@ -115,7 +115,7 @@ const features = [
   },
   {
     icon: Zap,
-    title: "Multi-Model AI",
+    title: "Multi-Model AI powered by galaxy2",
     description: "Qwen2.5 for reasoning, Lucy for research, StarCoder for fallback. Always the best output."
   },
   {
