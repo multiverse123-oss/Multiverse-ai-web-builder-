@@ -4,13 +4,14 @@
 
 [build.environment]
   NODE_VERSION = "18"
-  NPM_FLAGS = "--prefix frontend"
 
+# Critical for SPA routing: all requests go to index.html
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
 
+# Your security headers are great to keep
 [[headers]]
   for = "/*"
   [headers.values]
