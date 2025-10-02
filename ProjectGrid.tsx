@@ -1,5 +1,15 @@
+// frontend/src/pages/Dashboard/ProjectGrid.tsx
 import React from 'react';
-import { Project } from '../../contexts/ProjectContext';
+
+interface Project {
+  id: string;
+  name: string;
+  description: string;
+  status: 'draft' | 'building' | 'ready' | 'deployed' | 'error';
+  githubConnected: boolean;
+  githubUrl?: string;
+  previewUrl?: string;
+}
 
 interface ProjectGridProps {
   projects: Project[];
