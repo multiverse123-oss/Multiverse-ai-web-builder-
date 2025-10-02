@@ -3,16 +3,22 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Github, ExternalLink, Calendar } from 'lucide-react';
 import { useProject } from '../../contexts/ProjectContext';
-import CreateProjectModal from './CreateProjectModal';
-import ProjectGrid from './ProjectGrid';
+import CreateProjectModal from './CreateProjectModal.tsx';
+import ProjectGrid from './ProjectGrid.tsx';
 
 const Dashboard: React.FC = () => {
-  const { projects, loading, fetchProjects } = useProject();
+const { projects, loading, fetchProjects, createProject } = useProject();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   useEffect(() => {
     fetchProjects();
   }, []);
+
+const handleCreateProject = async (name: string, description: string) => {
+  await createProject(name, description);
+  // The ProjectProvider should update the state, triggering a re-render
+  // If not, we might need to call fetchProjects() again.
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
@@ -75,6 +81,7 @@ const Dashboard: React.FC = () => {
         <CreateProjectModal
           isOpen={isCreateModalOpen}
           onClose={() => setIsCreateModalOpen(false)}
+          onCreate={handleCreateProject}
         />
       </div>
     </div>
