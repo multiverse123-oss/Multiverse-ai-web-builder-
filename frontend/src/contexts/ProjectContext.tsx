@@ -1,6 +1,9 @@
 // frontend/src/contexts/ProjectContext.tsx
 import React, { createContext, useState, useContext, ReactNode } from 'react';
 
+// Add the MemberRole type with your other type definitions
+export type MemberRole = 'VIEWER' | 'EDITOR' | 'ADMIN';
+
 export interface Project {
   id: string;
   name: string;
@@ -38,7 +41,7 @@ interface ProjectProviderProps {
 
 // Fixed: Properly defined as a React Function Component
 export const ProjectProvider: React.FC<ProjectProviderProps> = ({ children }) => {
-  // Fixed: Added proper state initialization with TypeScript generics :cite[10]
+  // Fixed: Added proper state initialization with TypeScript generics
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
