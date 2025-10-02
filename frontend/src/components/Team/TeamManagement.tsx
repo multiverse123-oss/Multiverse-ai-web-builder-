@@ -2,6 +2,9 @@
 import React, { useState } from 'react';
 import { UserPlus, Settings, Mail, CheckCircle, XCircle } from 'lucide-react';
 
+// Define MemberRole locally to fix the import issue
+type MemberRole = 'VIEWER' | 'EDITOR' | 'ADMIN';
+
 export const TeamManagement: React.FC<{ projectId: string }> = ({ projectId }) => {
   const [members, setMembers] = useState<any[]>([]);
   const [showInviteModal, setShowInviteModal] = useState(false);
@@ -9,7 +12,8 @@ export const TeamManagement: React.FC<{ projectId: string }> = ({ projectId }) =
   const [inviteRole, setInviteRole] = useState<MemberRole>('VIEWER');
 
   const sendInvitation = async () => {
-    // API call to send invitation
+    // Mock implementation
+    console.log('Sending invitation to:', inviteEmail, 'with role:', inviteRole);
     setShowInviteModal(false);
     setInviteEmail('');
   };
@@ -27,42 +31,47 @@ export const TeamManagement: React.FC<{ projectId: string }> = ({ projectId }) =
         </button>
       </div>
 
-      {/* Members List */}
       <div className="space-y-4">
-        {members.map(member => (
-          <div key={member.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                <span className="text-purple-600 font-semibold">
-                  {member.user.name?.charAt(0) || member.user.email.charAt(0)}
-                </span>
-              </div>
-              <div>
-                <p className="font-medium">{member.user.name || 'Unknown User'}</p>
-                <p className="text-sm text-gray-600">{member.user.email}</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              <select
-                value={member.role}
-                onChange={(e) => {/* Update role */}}
-                className="px-3 py-1 border border-gray-300 rounded-lg text-sm"
-              >
-                <option value="VIEWER">Viewer</option>
-                <option value="EDITOR">Editor</option>
-                <option value="ADMIN">Admin</option>
-              </select>
-              
-              <button className="text-red-600 hover:text-red-800">
-                <XCircle className="h-5 w-5" />
-              </button>
-            </div>
+        {members.length === 0 ? (
+          <div className="text-center py-8 text-gray-500">
+            <UserPlus className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+            <p>No team members yet. Invite someone to collaborate!</p>
           </div>
-        ))}
+        ) : (
+          members.map(member => (
+            <div key={member.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                  <span className="text-purple-600 font-semibold">
+                    {member.user?.name?.charAt(0) || member.user?.email?.charAt(0) || 'U'}
+                  </span>
+                </div>
+                <div>
+                  <p className="font-medium">{member.user?.name || 'Unknown User'}</p>
+                  <p className="text-sm text-gray-600">{member.user?.email || 'No email'}</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center space-x-4">
+                <select
+                  value={member.role}
+                  onChange={(e) => console.log('Update role to:', e.target.value)}
+                  className="px-3 py-1 border border-gray-300 rounded-lg text-sm"
+                >
+                  <option value="VIEWER">Viewer</option>
+                  <option value="EDITOR">Editor</option>
+                  <option value="ADMIN">Admin</option>
+                </select>
+                
+                <button className="text-red-600 hover:text-red-800">
+                  <XCircle className="h-5 w-5" />
+                </button>
+              </div>
+            </div>
+          ))
+        )}
       </div>
 
-      {/* Invite Modal */}
       {showInviteModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-96">
