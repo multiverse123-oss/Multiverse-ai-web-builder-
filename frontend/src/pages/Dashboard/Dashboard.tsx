@@ -7,18 +7,18 @@ import CreateProjectModal from './CreateProjectModal.tsx';
 import ProjectGrid from './ProjectGrid.tsx';
 
 const Dashboard: React.FC = () => {
-const { projects, loading, fetchProjects, createProject } = useProject();
+  const { projects, loading, fetchProjects, createProject } = useProject();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   useEffect(() => {
     fetchProjects();
   }, []);
 
-const handleCreateProject = async (name: string, description: string) => {
-  await createProject(name, description);
-  // The ProjectProvider should update the state, triggering a re-render
-  // If not, we might need to call fetchProjects() again.
-};
+  const handleCreateProject = async (name: string, description: string) => {
+    await createProject(name, description);
+    // The ProjectProvider should update the state, triggering a re-render
+    // If not, we might need to call fetchProjects() again.
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
