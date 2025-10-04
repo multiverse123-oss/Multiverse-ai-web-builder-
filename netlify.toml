@@ -3,7 +3,7 @@
   publish = "frontend/dist"
 
 [build.environment]
-  NODE_VERSION = "18"
+  NODE_VERSION = "18.18.0"
 
 # Critical for SPA routing: all requests go to index.html
 [[redirects]]
