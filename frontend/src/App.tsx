@@ -1,7 +1,7 @@
 // frontend/src/App.tsx
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
-import './index.css';
+import './Index.css';
 
 // Page Imports
 import Welcome from './pages/Welcome/Welcome';

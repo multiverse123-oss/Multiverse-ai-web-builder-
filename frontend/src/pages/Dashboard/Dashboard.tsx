@@ -3,11 +3,11 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Github, ExternalLink, Calendar } from 'lucide-react';
 import { useProject } from '../../contexts/ProjectContext';
-import CreateProjectModal from './CreateProjectModal';
-import ProjectGrid from './ProjectGrid';
+import CreateProjectModal from './CreateProjectModal.tsx';
+import ProjectGrid from './ProjectGrid.tsx';
 
 const Dashboard: React.FC = () => {
-  const { projects, loading, fetchProjects } = useProject();
+  const { projects, loading, fetchProjects, createProject } = useProject();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   useEffect(() => {
@@ -75,6 +75,7 @@ const Dashboard: React.FC = () => {
         <CreateProjectModal
           isOpen={isCreateModalOpen}
           onClose={() => setIsCreateModalOpen(false)}
+          onCreate={createProject}
         />
       </div>
     </div>
