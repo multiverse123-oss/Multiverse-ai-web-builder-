@@ -2,9 +2,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Github, ExternalLink, Calendar } from 'lucide-react';
-import { useProject } from '../../contexts/ProjectContext';
-import CreateProjectModal from './CreateProjectModal';
-import ProjectGrid from './ProjectGrid';
+import { useProject } from '@/contexts/ProjectContext';
+import CreateProjectModal from '@/pages/Dashboard/CreateProjectModal';
+import ProjectGrid from '@/pages/Dashboard/ProjectGrid';
 
 const Dashboard: React.FC = () => {
   const { projects, loading, fetchProjects, createProject } = useProject();
