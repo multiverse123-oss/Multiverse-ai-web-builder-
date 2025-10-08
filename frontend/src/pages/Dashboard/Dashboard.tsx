@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Github, ExternalLink, Calendar } from 'lucide-react';
 import { useProject } from '../../contexts/ProjectContext';
-// Corrected imports - they now match the standard PascalCase filenames
 import CreateProjectModal from './CreateProjectModal';
 import ProjectGrid from './ProjectGrid';
 
