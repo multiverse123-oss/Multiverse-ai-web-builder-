@@ -3,9 +3,9 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Github, ExternalLink, Calendar } from 'lucide-react';
 import { useProject } from '../../contexts/ProjectContext';
-// Corrected imports: match the actual file names exactly
-import CreateProjectModal from './CreateProjectModal'; // or from './projectmodal';
-import ProjectGrid from './ProjectGrid'; // or from './projectgrid';
+// Corrected imports - they now match the standard PascalCase filenames
+import CreateProjectModal from './CreateProjectModal';
+import ProjectGrid from './ProjectGrid';
 
 const Dashboard: React.FC = () => {
   const { projects, loading, fetchProjects, createProject } = useProject();
