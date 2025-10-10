@@ -23,6 +23,13 @@ server.register(async function (fastify) {
   });
 });
 
+import authRoutes from './routes/auth';
+import projectRoutes from './routes/projects';
+
+// Register routes
+server.register(authRoutes, { prefix: '/auth' });
+server.register(projectRoutes, { prefix: '/api' });
+
 // Health check route
 server.get('/', async (request, reply) => {
   return { status: 'ok' };

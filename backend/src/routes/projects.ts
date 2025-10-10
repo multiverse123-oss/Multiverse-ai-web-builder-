@@ -1,49 +1,44 @@
-// backend/src/routes/projects.ts
-import { FastifyInstance } from 'fastify';
+import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
+import { PrismaClient } from '@prisma/client';
 
-export async function projectRoutes(fastify: FastifyInstance) {
-  // Get user's projects
-  fastify.get('/projects', {
-    onRequest: [fastify.authenticate]
-  }, async (request, reply) => {
-    const userId = request.user.id;
-    const projects = await fastify.prisma.project.findMany({
-      where: { userId },
-      orderBy: { updatedAt: 'desc' }
-    });
-    return projects;
+const prisma = new PrismaClient();
+
+export default async function (fastify: FastifyInstance) {
+  fastify.get('/projects', async (request: FastifyRequest, reply: FastifyReply) => {
+    const projects = await prisma.project.findMany();
+    reply.send(projects);
   });
 
-  // Create new project
-  fastify.post('/projects', {
-    onRequest: [fastify.authenticate]
-  }, async (request, reply) => {
-    const userId = request.user.id;
-    const { name, description } = request.body as { name: string; description: string };
-    
-    const project = await fastify.prisma.project.create({
+  fastify.post('/projects', async (request: FastifyRequest, reply: FastifyReply) => {
+    const { name, userId } = request.body as any;
+    const project = await prisma.project.create({
       data: {
         name,
-        description,
         userId,
-        status: 'draft'
-      }
+      },
     });
-    
-    return project;
+    reply.send(project);
   });
 
-  // Delete project
-  fastify.delete('/projects/:id', {
-    onRequest: [fastify.authenticate]
-  }, async (request, reply) => {
-    const { id } = request.params as { id: string };
-    const userId = request.user.id;
-    
-    await fastify.prisma.project.deleteMany({
-      where: { id, userId } // Ensure user owns the project
+  fastify.get('/projects/:id', async (request: FastifyRequest, reply: FastifyReply) => {
+    const { id } = request.params as any;
+    const project = await prisma.project.findUnique({ where: { id } });
+    reply.send(project);
+  });
+
+  fastify.put('/projects/:id', async (request: FastifyRequest, reply: FastifyReply) => {
+    const { id } = request.params as any;
+    const { name } = request.body as any;
+    const project = await prisma.project.update({
+      where: { id },
+      data: { name },
     });
-    
-    return { message: 'Project deleted' };
+    reply.send(project);
+  });
+
+  fastify.delete('/projects/:id', async (request: FastifyRequest, reply: FastifyReply) => {
+    const { id } = request.params as any;
+    await prisma.project.delete({ where: { id } });
+    reply.send({ message: 'Project deleted' });
   });
 }

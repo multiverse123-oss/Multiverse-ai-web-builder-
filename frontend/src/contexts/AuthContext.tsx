@@ -1,5 +1,6 @@
 // frontend/src/contexts/AuthContext.tsx
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
+import axios from 'axios';
 
 interface User {
   id: string;
@@ -39,6 +40,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log('VITE_API_URL:', import.meta.env.VITE_API_URL);
     const token = localStorage.getItem('auth_token');
     if (token) {
       const userData = JSON.parse(localStorage.getItem('user_data') || 'null');
@@ -50,20 +52,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (email: string, password: string) => {
     setLoading(true);
     try {
-      // Mock login for now
-      const mockUser: User = {
-        id: '1',
-        email,
-        name: 'Test User',
-        subscription: {
-          plan: 'free',
-          promptsPerDay: 8,
-          promptsUsedToday: 0
-        }
-      };
-      setUser(mockUser);
-      localStorage.setItem('auth_token', 'mock-token');
-      localStorage.setItem('user_data', JSON.stringify(mockUser));
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/login`, { email, password });
+      const { token, user } = response.data;
+      setUser(user);
+      localStorage.setItem('auth_token', token);
+      localStorage.setItem('user_data', JSON.stringify(user));
     } catch (error) {
       console.error('Login error:', error);
       throw error;
@@ -79,20 +72,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         throw new Error('You must agree to the terms and conditions');
       }
 
-      // Mock signup for now
-      const mockUser: User = {
-        id: Math.random().toString(36).substr(2, 9),
-        name,
-        email,
-        subscription: {
-          plan: 'free',
-          promptsPerDay: 8,
-          promptsUsedToday: 0
-        }
-      };
-      setUser(mockUser);
-      localStorage.setItem('auth_token', 'mock-token');
-      localStorage.setItem('user_data', JSON.stringify(mockUser));
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/signup`, { name, email, password });
+      const { token, user } = response.data;
+      setUser(user);
+      localStorage.setItem('auth_token', token);
+      localStorage.setItem('user_data', JSON.stringify(user));
     } catch (error) {
       console.error('Signup error:', error);
       throw error;
